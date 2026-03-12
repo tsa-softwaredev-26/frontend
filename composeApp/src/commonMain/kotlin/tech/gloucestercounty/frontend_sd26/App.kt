@@ -10,19 +10,40 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 @Preview
 fun App() {
+    nav = rememberNavController()
+
     MaterialTheme(colorScheme = lightColorScheme()) {
-        Scaffold { innerPaddings ->
-            Column(
-                modifier = Modifier.padding(innerPaddings)
-            ) {
-                Button(
-                    onClick = {}
-                ) {
-                    Text("test button")
+        NavHost(navController = nav, startDestination = Home) {
+            composable<Home> {
+                Scaffold { innerPaddings ->
+                    Column(
+                        modifier = Modifier.padding(innerPaddings)
+                    ) {
+                        Button(
+                            onClick = {
+                                nav.navigate(TestingPage)
+                            }
+                        ) {
+                            Text("test button")
+                        }
+                    }
+                }
+            }
+
+            composable<TestingPage> {
+                Scaffold { innerPaddings ->
+                    Column(
+                        modifier = Modifier.padding(innerPaddings)
+                    ) {
+                        Text("testing page, hit back button to go back")
+                    }
                 }
             }
         }
