@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import tech.gloucestercounty.frontend_sd26.ui.HomeScreen
+import tech.gloucestercounty.frontend_sd26.ui.Scan
 
 @Composable
 @Preview
@@ -23,6 +24,10 @@ fun App() {
         NavHost(navController = nav, startDestination = Home) {
             composable<Home> {
                 HomeScreen()
+            }
+
+            composable<ScanPage> {
+                Scan()
             }
 
             composable<TestingPage> {

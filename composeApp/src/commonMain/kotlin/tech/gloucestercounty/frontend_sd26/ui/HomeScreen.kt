@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import tech.gloucestercounty.frontend_sd26.ScanPage
 import tech.gloucestercounty.frontend_sd26.TestingPage
 import tech.gloucestercounty.frontend_sd26.nav
 
@@ -47,7 +49,7 @@ fun HomeScreen() {
         ) {
             Button(
                 onClick = {
-                    nav.navigate(TestingPage)
+                    nav.navigate(ScanPage)
                 },
                 modifier = Modifier.fillMaxWidth().weight(1f),
                 shape = RoundedCornerShape(12.dp)
@@ -60,7 +62,10 @@ fun HomeScreen() {
                         "Scan Icon",
                         modifier = Modifier.width(96.dp).height(96.dp)
                     )
-                    Text("Scan Mode")
+                    Text(
+                        "Scan",
+                        style = MaterialTheme.typography.headlineLarge
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -79,7 +84,10 @@ fun HomeScreen() {
                         "Ask Icon",
                         modifier = Modifier.width(96.dp).height(96.dp)
                     )
-                    Text("Ask Mode")
+                    Text(
+                        "Ask",
+                        style = MaterialTheme.typography.headlineLarge
+                    )
                 }
             }
         }

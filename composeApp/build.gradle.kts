@@ -39,9 +39,14 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
-            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+            implementation(libs.navigation.compose)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.material.icons.extended)
+            implementation(libs.camerak)
+            implementation(libs.image.saver.plugin)
+            api("dev.icerock.moko:permissions:0.20.1")
+            implementation(libs.permissions.camera)
+            api("dev.icerock.moko:permissions-compose:0.20.1")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
