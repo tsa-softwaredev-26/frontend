@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +21,7 @@ import com.kashif.cameraK.compose.rememberCameraKState
 import com.kashif.cameraK.enums.AspectRatio
 import com.kashif.cameraK.enums.CameraLens
 import com.kashif.cameraK.enums.FlashMode
+import com.kashif.cameraK.result.ImageCaptureResult
 import com.kashif.cameraK.state.CameraConfiguration
 import com.kashif.cameraK.state.CameraKState
 import com.kashif.imagesaverplugin.ImageSaverConfig
@@ -29,16 +32,23 @@ import dev.icerock.moko.permissions.camera.CAMERA
 import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import kotlinx.coroutines.launch
+import tech.gloucestercounty.frontend_sd26.PostScan
+import tech.gloucestercounty.frontend_sd26.nav
 
 @Composable
 @Preview
 fun Scan() {
-    Scaffold { innerPaddings ->
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        }
+    ) { innerPaddings ->
         Column(
             modifier = Modifier.padding(innerPaddings).padding(8.dp)
         ) {
-            val scope = rememberCoroutineScope()
-
             val factory = rememberPermissionsControllerFactory()
             val controller: PermissionsController = remember(factory) { factory.createPermissionsController() }
             BindEffect(controller)
@@ -69,7 +79,13 @@ fun Scan() {
                         controller = controller,
                         modifier = Modifier.fillMaxSize().clickable {
                             scope.launch {
-                                controller.takePictureToFile()
+                                when (val res = controller.takePictureToFile()) {
+                                    is ImageCaptureResult.SuccessWithFile -> nav.navigate(PostScan(res.filePath))
+                                    is ImageCaptureResult.Error -> scope.launch {
+                                        snackbarHostState.showSnackbar("Unable to take photo, please try again")
+                                    }
+                                    else -> {} // handles class for success with no file, which is not possible when calling .takePictureToFile()
+                                }
                             }
                         }
                     )

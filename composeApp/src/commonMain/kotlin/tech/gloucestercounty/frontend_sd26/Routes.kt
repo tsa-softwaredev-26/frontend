@@ -12,4 +12,7 @@ object Home
 object ScanPage
 
 @Serializable
+data class PostScan(val path: String)
+
+@Serializable
 object TestingPage
