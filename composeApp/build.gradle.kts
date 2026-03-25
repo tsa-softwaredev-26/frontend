@@ -48,6 +48,7 @@ kotlin {
             implementation(libs.permissions.camera)
             api("dev.icerock.moko:permissions-compose:0.20.1")
             implementation(libs.coil.compose)
+            implementation(libs.coil.network.okhttp)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
