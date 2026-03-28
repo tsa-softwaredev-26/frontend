@@ -15,4 +15,4 @@ object ScanPage
 data class PostScan(val path: String)
 
 @Serializable
-object TestingPage
+object SettingsPage

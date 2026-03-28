@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import tech.gloucestercounty.frontend_sd26.ScanPage
-import tech.gloucestercounty.frontend_sd26.TestingPage
+import tech.gloucestercounty.frontend_sd26.SettingsPage
 import tech.gloucestercounty.frontend_sd26.nav
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +52,7 @@ fun HomeScreen() {
         ) {
             Button(
                 onClick = {
-                    nav.navigate(TestingPage)
+                    nav.navigate(SettingsPage)
                 },
                 modifier = Modifier.fillMaxWidth().weight(1f).background(Brush.linearGradient(
                     listOf(Color(0xFF727DFF), Color(0xFF2230A3)), Offset(0f, 0f), Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
