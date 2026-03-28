@@ -29,6 +29,10 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.ktor.client.cio)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -48,7 +52,7 @@ kotlin {
             implementation(libs.permissions.camera)
             api("dev.icerock.moko:permissions-compose:0.20.1")
             implementation(libs.coil.compose)
-            implementation(libs.coil.network.okhttp)
+            implementation(libs.coil.network.ktor)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
