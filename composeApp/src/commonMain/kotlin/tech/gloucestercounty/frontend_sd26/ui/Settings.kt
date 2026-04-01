@@ -15,11 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import tech.gloucestercounty.frontend_sd26.AudioRecorder
 import tech.gloucestercounty.frontend_sd26.nav
 import kotlin.math.roundToInt
-
-
-
 
 @Composable
 fun EasySegmentedButton(list: List<String>, select: () -> Int, change: (Int) -> Unit) {
@@ -83,7 +81,8 @@ fun Settings() {
 
                 }
             )
-        }
+        },
+        floatingActionButton = { AudioRecorder.FAB() }
     ) { innerPaddings ->
         Column(
             modifier = Modifier.padding(innerPaddings).padding(16.dp).verticalScroll(rememberScrollState()),

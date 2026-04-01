@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import tech.gloucestercounty.frontend_sd26.AudioRecorder
 import tech.gloucestercounty.frontend_sd26.ScanPage
 import tech.gloucestercounty.frontend_sd26.SettingsPage
 import tech.gloucestercounty.frontend_sd26.nav
@@ -45,7 +46,8 @@ fun HomeScreen() {
                     }
                 }
             )
-        }
+        },
+        floatingActionButton = { AudioRecorder.FAB() }
     ) { innerPaddings ->
         Column(
             modifier = Modifier.padding(innerPaddings).padding(8.dp)

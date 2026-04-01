@@ -32,6 +32,7 @@ import dev.icerock.moko.permissions.camera.CAMERA
 import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import kotlinx.coroutines.launch
+import tech.gloucestercounty.frontend_sd26.AudioRecorder
 import tech.gloucestercounty.frontend_sd26.PostScan
 import tech.gloucestercounty.frontend_sd26.nav
 
@@ -44,7 +45,8 @@ fun Scan() {
     Scaffold(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
-        }
+        },
+        floatingActionButton = { AudioRecorder.FAB() }
     ) { innerPaddings ->
         Column(
             modifier = Modifier.padding(innerPaddings).padding(8.dp)
