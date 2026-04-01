@@ -6,6 +6,12 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.ktorfit)
+}
+
+ktorfit {
+    compilerPluginVersion.set("2.3.3")
 }
 
 kotlin {
@@ -53,6 +59,13 @@ kotlin {
             api("dev.icerock.moko:permissions-compose:0.20.1")
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
+            implementation(libs.ktorfit.lib)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.multiplatform.settings)
+            implementation(libs.multiplatform.settings.no.arg)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -90,4 +103,3 @@ android {
 dependencies {
     debugImplementation(libs.compose.uiTooling)
 }
-
