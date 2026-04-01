@@ -17,9 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tech.gloucestercounty.frontend_sd26.nav
 import kotlin.math.roundToInt
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+
+
+
 
 @Composable
 fun EasySegmentedButton(list: List<String>, select: () -> Int, change: (Int) -> Unit) {
@@ -47,20 +47,21 @@ fun EasySegmentedButton(list: List<String>, select: () -> Int, change: (Int) -> 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
-fun Settings(
-    viewModel: SettingsViewModel = viewModel()
-) {
-    /* var performanceMode by remember { mutableIntStateOf(1) }
+fun Settings() {
+    //TODO: ktorfit is needed here to grab current settings and fill them in defaults
+
+    var performanceMode by remember { mutableIntStateOf(1) }
+    val performanceModes = listOf("Fast", "Balanced", "Accurate")
 
     var voiceSpeed by remember { mutableFloatStateOf(1.0f) }
 
     var scanUpdateLocation by remember { mutableStateOf(true) }
     var learningEnabled by remember { mutableStateOf(true) }
 
-    var buttonLayout by remember { mutableIntStateOf(0) } */
-    val state by viewModel.uiState.collectAsState()
+    var buttonLayout by remember { mutableIntStateOf(0) }
 
-    val performanceModes = listOf("Fast", "Balanced", "Accurate")
+
+
     val buttonLayouts = listOf("Default", "Swapped")
 
     Scaffold(
@@ -75,11 +76,11 @@ fun Settings(
                     ) {
                         Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Back")
                     }
-                },
-                actions = {
-                    TextButton(onClick = { viewModel.saveSettings() }) {
-                        Text("Save")
-                    }
+
+
+
+
+
                 }
             )
         }
@@ -89,47 +90,47 @@ fun Settings(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text("Performance Mode", style = MaterialTheme.typography.titleMedium)
-            EasySegmentedButton(performanceModes, { state.performanceMode }, { viewModel.onPerformanceModeChange(it) })
+            EasySegmentedButton(performanceModes, { performanceMode }, { performanceMode = it })
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-            val displaySpeed = (state.voiceSpeed * 4).roundToInt() / 4f
+            val displaySpeed = (voiceSpeed * 4).roundToInt() / 4f
             Text(
                 "Voice Speed: ${displaySpeed}x",
                 style = MaterialTheme.typography.titleMedium
             )
             Slider(
-                value = state.voiceSpeed,
-                onValueChange = { viewModel.onVoiceSpeedChange(it) },
+                value = voiceSpeed,
+                onValueChange = { voiceSpeed = it },
                 valueRange = 0.25f..4.0f,
                 steps = 14,
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
             )
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
             Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { viewModel.onScanUpdateLocationChange(!state.scanUpdateLocation)  },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { scanUpdateLocation = !scanUpdateLocation },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Scan Update Location", style = MaterialTheme.typography.titleMedium)
                 Switch(
-                    checked = state.scanUpdateLocation,
-                    onCheckedChange = { viewModel.onScanUpdateLocationChange(it) }
+                    checked = scanUpdateLocation,
+                    onCheckedChange = { scanUpdateLocation = it }
                 )
             }
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
             Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { viewModel.onLearningEnabledChange(!state.learningEnabled) },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { learningEnabled = !learningEnabled },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Learning Enabled", style = MaterialTheme.typography.titleMedium)
                 Switch(
-                    checked = state.learningEnabled,
-                    onCheckedChange = { viewModel.onLearningEnabledChange(it) }
+                    checked = learningEnabled,
+                    onCheckedChange = { learningEnabled = it }
                 )
             }
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
             Text("Button Layout", style = MaterialTheme.typography.titleMedium)
-            EasySegmentedButton(buttonLayouts, { state.buttonLayout }, { viewModel.onButtonLayoutChange(it) })
+            EasySegmentedButton(buttonLayouts, { buttonLayout }, { buttonLayout = it })
         }
     }
 }
