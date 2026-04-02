@@ -8,6 +8,8 @@ import androidx.compose.material.icons.rounded.DocumentScanner
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -17,9 +19,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import kotlinx.coroutines.launch
 import tech.gloucestercounty.frontend_sd26.AudioRecorder
 import tech.gloucestercounty.frontend_sd26.ScanPage
 import tech.gloucestercounty.frontend_sd26.SettingsPage
+import tech.gloucestercounty.frontend_sd26.api.BaseAPI
 import tech.gloucestercounty.frontend_sd26.nav
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,6 +31,18 @@ import tech.gloucestercounty.frontend_sd26.nav
 @Preview
 fun HomeScreen() {
     // the home screen is the first screen that opens with the app
+
+    // set up snackbars for errors
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    // check health and show snackbar error if bad
+    scope.launch {
+        if (!BaseAPI.Health()) {
+            snackbarHostState.showSnackbar("COULD NOT CONNECT TO API: app will most likely crash soon")
+        }
+    }
+
     Scaffold(
         topBar = {
             // top app bar with spaitra name
@@ -50,6 +66,7 @@ fun HomeScreen() {
                 }
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) }, // add snackbar to app
         floatingActionButton = { AudioRecorder.FAB() } // adds fab for recording audio
     ) { innerPaddings ->
         Column(

@@ -2,18 +2,11 @@ package tech.gloucestercounty.frontend_sd26.api
 
 import dev.icerock.moko.socket.Socket
 import dev.icerock.moko.socket.SocketOptions
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.plugins.websocket.WebSockets
-import io.ktor.client.plugins.websocket.webSocket
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.client.request.request
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.http.isSuccess
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
@@ -21,7 +14,6 @@ import kotlinx.io.readByteArray
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.jsonObject
 import kotlin.io.encoding.Base64
 
@@ -126,7 +118,7 @@ object BaseAPI {
             // when an error occurs
             on("error") {
                 val data = Json.parseToJsonElement(it).jsonObject // get data
-                store(data["code"].toString(), data["message"].toString()) // run corresponding function
+                error(data["code"].toString(), data["message"].toString()) // run corresponding function
             }
         }
     }
@@ -145,12 +137,5 @@ object BaseAPI {
             "image" to Base64.encode(SystemFileSystem.source(Path(file)).buffered().use { it.readByteArray() }),
             "focal_length_px" to 3094
         )))
-    }
-    // goes to next or previous result and server will narrate
-    fun nextResult() {
-        socket.emit("navigate", Json.encodeToString(mapOf("direction" to "next")))
-    }
-    fun prevResult() {
-        socket.emit("navigate", Json.encodeToString(mapOf("direction" to "prev")))
     }
 }

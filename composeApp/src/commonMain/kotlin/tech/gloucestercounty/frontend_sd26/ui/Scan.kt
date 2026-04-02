@@ -4,11 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -34,6 +30,7 @@ import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import kotlinx.coroutines.launch
 import tech.gloucestercounty.frontend_sd26.AudioRecorder
 import tech.gloucestercounty.frontend_sd26.PostScan
+import tech.gloucestercounty.frontend_sd26.api.BaseAPI
 import tech.gloucestercounty.frontend_sd26.nav
 
 @Composable
@@ -90,7 +87,10 @@ fun Scan() {
                         modifier = Modifier.fillMaxSize().clickable { // make the preview take a photo on click
                             scope.launch {
                                 when (val res = controller.takePictureToFile()) {
-                                    is ImageCaptureResult.SuccessWithFile -> nav.navigate(PostScan(res.filePath))
+                                    is ImageCaptureResult.SuccessWithFile -> {
+                                        BaseAPI.sendImage(res.filePath)
+                                        nav.navigate(PostScan(res.filePath))
+                                    }
                                     is ImageCaptureResult.Error -> scope.launch {
                                         snackbarHostState.showSnackbar("Unable to take photo, please try again")
                                     }

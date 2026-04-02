@@ -64,6 +64,8 @@ kotlin {
             api("dev.icerock.moko:socket-io:0.6.0")
             implementation(libs.kotlinx.io.core)
             implementation(libs.kotlinx.io.bytestring)
+            implementation(libs.text.to.speech)
+            implementation(libs.text.to.speech.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
