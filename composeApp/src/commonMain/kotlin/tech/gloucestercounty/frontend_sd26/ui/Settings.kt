@@ -21,19 +21,24 @@ import kotlin.math.roundToInt
 
 @Composable
 fun EasySegmentedButton(list: List<String>, select: () -> Int, change: (Int) -> Unit) {
+    // quicker way of making custom segmented buttons, which are reused a lot in this page
+    // the list of options is passed normally, but there is no way to directly pass the variable to get and change on the other side, so lambda functions are used instead
     Column(modifier = Modifier.fillMaxWidth()) {
         list.forEachIndexed { i, label ->
             OutlinedButton(
-                onClick = { change(i) },
+                onClick = { change(i) }, // change selected item to the one clicked
+                // shape changes depending on index in list
                 shape = if (i == 0) RoundedCornerShape(8.dp, 8.dp) else if (i == list.size - 1) RoundedCornerShape(0.dp, 0.dp, 8.dp, 8.dp) else RoundedCornerShape(0.dp),
                 modifier = Modifier.fillMaxWidth().height(64.dp),
+                // color changes if it is selected or not (selected color is actually pulled from normal/nonoutlined button colors)
                 colors = if (select() == i) ButtonDefaults.buttonColors() else ButtonDefaults.outlinedButtonColors()
             ) {
                 Text(
-                    label,
+                    label, // label is specific to each item
                     fontSize = 16.sp,
                     modifier = Modifier.weight(1f)
                 )
+                // add check mark on right side of button
                 if (select() == i) {
                     Icon(Icons.Rounded.Check, "Selected")
                 }
@@ -46,8 +51,10 @@ fun EasySegmentedButton(list: List<String>, select: () -> Int, change: (Int) -> 
 @Composable
 @Preview
 fun Settings() {
-    //TODO: ktorfit is needed here to grab current settings and fill them in defaults
+    // settings page
 
+    // set all variables through "remember" state variables
+    // these kinds of variables will recompose or update all tied objects when changed
     var performanceMode by remember { mutableIntStateOf(1) }
     val performanceModes = listOf("Fast", "Balanced", "Accurate")
 
@@ -57,40 +64,37 @@ fun Settings() {
     var learningEnabled by remember { mutableStateOf(true) }
 
     var buttonLayout by remember { mutableIntStateOf(0) }
-
-
-
     val buttonLayouts = listOf("Default", "Swapped")
 
     Scaffold(
-        topBar = {
+        topBar = { // add top bar with settings label
             CenterAlignedTopAppBar(
                 title = {
                     Text("Settings")
                 },
-                navigationIcon = {
+                navigationIcon = { // back button
                     IconButton(
-                        onClick = { nav.popBackStack() }
+                        onClick = { nav.popBackStack() } // navigate back
                     ) {
                         Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Back")
                     }
-
-
-
-
-
                 }
             )
         },
-        floatingActionButton = { AudioRecorder.FAB() }
+        floatingActionButton = { AudioRecorder.FAB() } // audio controller fab
     ) { innerPaddings ->
         Column(
+            // many modifiers, but most importantly .verticalScroll allows user to scroll through page
             modifier = Modifier.padding(innerPaddings).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // NOTE: most settings here are self-explanatory and repetitive so there will be less comments
+
+            // how accurate or fast the model is
             Text("Performance Mode", style = MaterialTheme.typography.titleMedium)
             EasySegmentedButton(performanceModes, { performanceMode }, { performanceMode = it })
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            // the speed of tts voice
             val displaySpeed = (voiceSpeed * 4).roundToInt() / 4f
             Text(
                 "Voice Speed: ${displaySpeed}x",
@@ -104,6 +108,7 @@ fun Settings() {
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
             )
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            // whether to update locations when new items are scanned
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { scanUpdateLocation = !scanUpdateLocation },
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -116,6 +121,7 @@ fun Settings() {
                 )
             }
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            // whether to learn item shapes from previous scans
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { learningEnabled = !learningEnabled },
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -128,6 +134,7 @@ fun Settings() {
                 )
             }
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            // swap main page button layout
             Text("Button Layout", style = MaterialTheme.typography.titleMedium)
             EasySegmentedButton(buttonLayouts, { buttonLayout }, { buttonLayout = it })
         }

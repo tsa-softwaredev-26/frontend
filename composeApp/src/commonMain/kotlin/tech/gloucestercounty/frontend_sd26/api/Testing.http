@@ -1,0 +1,7 @@
+WEBSOCKET ws://nre5bjw44wddpu2zjg4fe4iehq.srv.us/socket.io/?key=27d56c87984f2804e4c30459c0ea2623f9536dce3b38aa29a911abfe6b45cc47&EIO=4&transport=websocket
+Content-Type: application/json
+
+###
+GET https://nre5bjw44wddpu2zjg4fe4iehq.srv.us/items
+X-API-Key: 27d56c87984f2804e4c30459c0ea2623f9536dce3b38aa29a911abfe6b45cc47
+

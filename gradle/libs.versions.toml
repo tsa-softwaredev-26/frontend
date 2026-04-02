@@ -7,6 +7,8 @@ androidx-activity = "1.13.0"
 androidx-lifecycle = "2.10.0"
 camerak = "0.4"
 coilCompose = "3.4.0"
+klaxon = "5.6"
+kotlinxIoCore = "0.9.0"
 ktor = "3.4.2"
 composeMultiplatform = "1.10.3"
 kotlin = "2.3.20"
@@ -17,11 +19,15 @@ materialIconsExtended = "1.7.3"
 navigationCompose = "2.9.2"
 permissionsCamera = "0.20.1"
 recordCore = "0.5.0"
+socketIoClient = "2.1.2"
 
 [libraries]
 camerak = { module = "io.github.kashif-mehmood-km:camerak", version.ref = "camerak" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coilCompose" }
+klaxon = { module = "com.beust:klaxon", version.ref = "klaxon" }
+kotlinx-io-bytestring = { module = "org.jetbrains.kotlinx:kotlinx-io-bytestring", version.ref = "kotlinxIoCore" }
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIoCore" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 image_saver_plugin = { module = "io.github.kashif-mehmood-km:image_saver_plugin", version.ref = "camerak" }
@@ -37,6 +43,7 @@ compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMul
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
 ktorfit-lib = { module = "de.jensklingenberg.ktorfit:ktorfit-lib", version.ref = "ktorfit" }
 material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
@@ -49,6 +56,7 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version = "1.3.0" }
 multiplatform-settings-no-arg = { module = "com.russhwolf:multiplatform-settings-no-arg", version = "1.3.0" }
+socket-io-client = { module = "io.socket:socket.io-client", version.ref = "socketIoClient" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

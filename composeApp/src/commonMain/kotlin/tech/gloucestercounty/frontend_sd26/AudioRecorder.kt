@@ -16,22 +16,27 @@ import dev.theolm.record.Record
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
+// object with all audio controller/recorder/tts items
 object AudioRecorder {
+    // keeps track of whether audio is being recorded, as a mutable state flow to recompose and update items when changed
     private val _isRecording = MutableStateFlow(false)
 
     @Composable
     fun FAB() {
+        // creates floating action button for use on any page
         val isRecording by _isRecording.collectAsState()
+        // button changes while recording to be a recording symbol
         if (isRecording) {
             FloatingActionButton(
-                onClick = {
+                onClick = { // stops the recording
                     Record.stopRecording()
                     _isRecording.value = false
                 }
             ) {
-                Icon(Icons.Rounded.Album, "chat", tint = Color(0xFFFF0000))
+                Icon(Icons.Rounded.Album, "stop recording", tint = Color(0xFFFF0000)) // there is no recording icon so the record/album logo is used since it is close enough
             }
         } else {
+            // get permissions to use microphone
             val factory = rememberPermissionsControllerFactory()
             val controller: PermissionsController = remember(factory) { factory.createPermissionsController() }
             BindEffect(controller)
@@ -39,7 +44,7 @@ object AudioRecorder {
                 controller.providePermission(Permission.RECORD_AUDIO)
             }
             FloatingActionButton(
-                onClick = {
+                onClick = { // starts the recording
                     Record.startRecording()
                     _isRecording.value = true
                 }

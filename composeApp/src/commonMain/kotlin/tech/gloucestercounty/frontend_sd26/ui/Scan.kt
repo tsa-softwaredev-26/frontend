@@ -39,18 +39,21 @@ import tech.gloucestercounty.frontend_sd26.nav
 @Composable
 @Preview
 fun Scan() {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+    // used to take the photo itself
+
+    val snackbarHostState = remember { SnackbarHostState() } // allows usage of snackbar error messages
+    val scope = rememberCoroutineScope() // coroutine scope initalizer
 
     Scaffold(
         snackbarHost = {
-            SnackbarHost(snackbarHostState)
+            SnackbarHost(snackbarHostState) // displays snackbars when in use
         },
-        floatingActionButton = { AudioRecorder.FAB() }
+        floatingActionButton = { AudioRecorder.FAB() } // adds audio fab
     ) { innerPaddings ->
         Column(
             modifier = Modifier.padding(innerPaddings).padding(8.dp)
         ) {
+            // get permissions to use camera
             val factory = rememberPermissionsControllerFactory()
             val controller: PermissionsController = remember(factory) { factory.createPermissionsController() }
             BindEffect(controller)
@@ -58,6 +61,7 @@ fun Scan() {
                 controller.providePermission(Permission.CAMERA)
             }
 
+            // set up camera
             val imageSaverPlugin = rememberImageSaverPlugin(config = ImageSaverConfig(isAutoSave = true))
             val cameraState by rememberCameraKState(
                 config = CameraConfiguration(
@@ -66,20 +70,24 @@ fun Scan() {
                     aspectRatio = AspectRatio.RATIO_4_3
                 ),
                 setupPlugins = { stateHolder ->
-                    stateHolder.attachPlugin(imageSaverPlugin)
+                    stateHolder.attachPlugin(imageSaverPlugin) // allows image to be saved to local storage
                 }
             )
 
+            // check on state of camera
             when (cameraState) {
                 is CameraKState.Initializing -> {
+                    // indicate that it is loading permissions or setting up
                     CircularProgressIndicator()
                 }
                 is CameraKState.Ready -> {
+                    // when it is ready
+                    // create a controller for easy access
                     val controller = (cameraState as CameraKState.Ready).controller
-
+                    // create a preview
                     CameraPreviewView(
                         controller = controller,
-                        modifier = Modifier.fillMaxSize().clickable {
+                        modifier = Modifier.fillMaxSize().clickable { // make the preview take a photo on click
                             scope.launch {
                                 when (val res = controller.takePictureToFile()) {
                                     is ImageCaptureResult.SuccessWithFile -> nav.navigate(PostScan(res.filePath))
@@ -93,6 +101,7 @@ fun Scan() {
                     )
                 }
                 is CameraKState.Error -> {
+                    // if camera was unable to initialize
                     Text("Camera Error: ${(cameraState as CameraKState.Error).message}")
                 }
             }

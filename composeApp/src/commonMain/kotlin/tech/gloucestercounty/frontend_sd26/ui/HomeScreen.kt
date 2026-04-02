@@ -26,13 +26,16 @@ import tech.gloucestercounty.frontend_sd26.nav
 @Composable
 @Preview
 fun HomeScreen() {
+    // the home screen is the first screen that opens with the app
     Scaffold(
         topBar = {
+            // top app bar with spaitra name
             CenterAlignedTopAppBar(
                 title = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        // loads a logo image from a (unfortunately) hardcoded url due to ios limitations with drawings
                         AsyncImage(
                             "https://cdn.discordapp.com/attachments/1372222272231833804/1485392585295003668/spaitra.png?ex=69c45625&is=69c304a5&hm=5cf0f1e2a4af9e5aa51d7c312c4c81e95d23cad61a399386d2450b99ee902261&",
                             "Spaitra logo",
@@ -47,26 +50,27 @@ fun HomeScreen() {
                 }
             )
         },
-        floatingActionButton = { AudioRecorder.FAB() }
+        floatingActionButton = { AudioRecorder.FAB() } // adds fab for recording audio
     ) { innerPaddings ->
         Column(
             modifier = Modifier.padding(innerPaddings).padding(8.dp)
         ) {
-            Button(
+            Button( // top settings button
                 onClick = {
-                    nav.navigate(SettingsPage)
+                    nav.navigate(SettingsPage) // navigates to settings page when clicked
                 },
                 modifier = Modifier.fillMaxWidth().weight(1f).background(Brush.linearGradient(
+                    // difficult but working way of adding the gradient background on the buttons
                     listOf(Color(0xFF727DFF), Color(0xFF2230A3)), Offset(0f, 0f), Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
                 ), shape = RoundedCornerShape(12.dp)),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                shape = RoundedCornerShape(12.dp), // shape has to be repeated so neither the background or button itself overflows
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent) // needed for gradient background
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        Icons.Rounded.Settings,
+                        Icons.Rounded.Settings, // compose multiplatform icon for settings
                         "Settings Icon",
                         modifier = Modifier.width(96.dp).height(96.dp)
                     )
@@ -77,6 +81,7 @@ fun HomeScreen() {
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
+            // button to go to scan page, nearly identical code to settings but slightly larger weight to make it larger
             Button(
                 onClick = {
                     nav.navigate(ScanPage)
@@ -91,7 +96,7 @@ fun HomeScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        Icons.Rounded.DocumentScanner,
+                        Icons.Rounded.DocumentScanner, // compose multiplatform icon for scanning
                         "Scan Icon",
                         modifier = Modifier.width(96.dp).height(96.dp)
                     )
