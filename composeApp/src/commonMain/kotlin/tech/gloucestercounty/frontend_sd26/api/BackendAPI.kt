@@ -20,8 +20,8 @@ import kotlin.io.encoding.Base64
 // the overall api interaction object
 object BaseAPI {
     // basic variables used by all functions
-    private const val URL = "https://nre5bjw44wddpu2zjg4fe4iehq.srv.us"
-    private const val API_KEY = "27d56c87984f2804e4c30459c0ea2623f9536dce3b38aa29a911abfe6b45cc47" //TODO change before committing and after pulling
+    private const val URL = "https://nre5bjw44wddpu2zjg4fe4iehq.srv.us" // will occasionally update, looking into wiredoor instead of srv.us
+    private const val API_KEY = "[REDACTED]" // change before committing and after pulling (fake one used in some commits)
     private val client = HttpClient()
     private lateinit var socket: Socket
 
