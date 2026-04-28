@@ -13,6 +13,8 @@ import dev.icerock.moko.permissions.compose.BindEffect
 import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import dev.icerock.moko.permissions.microphone.RECORD_AUDIO
 import dev.theolm.record.Record
+import dev.theolm.record.config.OutputFormat
+import dev.theolm.record.config.RecordConfig
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -46,6 +48,13 @@ object AudioRecorder {
 
     @Composable
     fun FAB() {
+        // set recording config
+        Record.setConfig(
+            RecordConfig(
+                outputFormat = OutputFormat.WAV // use wav files instead of the default mp4
+            )
+        )
+
         // creates floating action button for use on any page
         val isRecording by _isRecording.collectAsState()
         // button changes while recording to be a recording symbol

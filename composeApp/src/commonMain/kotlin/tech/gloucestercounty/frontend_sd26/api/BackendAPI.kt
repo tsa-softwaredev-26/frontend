@@ -1,6 +1,7 @@
 package tech.gloucestercounty.frontend_sd26.api
 
 import dev.icerock.moko.socket.Socket
+import dev.icerock.moko.socket.SocketEvent
 import dev.icerock.moko.socket.SocketOptions
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -14,14 +15,16 @@ import kotlinx.io.readByteArray
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.put
 import kotlin.io.encoding.Base64
 
 // the overall api interaction object
 object BaseAPI {
     // basic variables used by all functions
-    private const val URL = "https://nre5bjw44wddpu2zjg4fe4iehq.srv.us" // will occasionally update, looking into wiredoor instead of srv.us
-    private const val API_KEY = "[REDACTED]" // change before committing and after pulling (fake one used in some commits)
+    private const val URL = "https://ii7tcxfnhkcaui3pj6zb25y3ri.srv.us" // will occasionally update, looking into wiredoor instead of srv.us
+    private const val API_KEY = "299785c6c2c90213cba57e443ecfee5c1f05e86da0a5579f411e41721fdc9048" // change before committing and after pulling (fake one used in some commits)
     private val client = HttpClient()
     private lateinit var socket: Socket
 
@@ -101,26 +104,35 @@ object BaseAPI {
             on("tts") {
                 // run tts function with passed text
                 tts(Json.parseToJsonElement(it).jsonObject["narration"].toString())
+                println("tts running")
             }
 
             // when server asks for camera to open
             on("control") {
                 // run the passed openCamera function
                 openCamera()
+                println("opening camera")
             }
 
             // when server asks to store scan id for later use
             on("action_result") {
                 val data = Json.parseToJsonElement(it).jsonObject // get data
                 store(data["type"].toString(), (data["data"] as JsonObject)["scan_id"].toString()) // run corresponding function
+                println("storing data")
             }
 
             // when an error occurs
             on("error") {
                 val data = Json.parseToJsonElement(it).jsonObject // get data
                 error(data["code"].toString(), data["message"].toString()) // run corresponding function
+                println("ERROR ${data["code"].toString()}: ${data["message"].toString()}")
+            }
+
+            on(SocketEvent.Message) {
+                println(it.toString())
             }
         }
+        socket.connect()
     }
 
     // public functions for interacting with the websocket
@@ -130,12 +142,14 @@ object BaseAPI {
         socket.emit("audio", Json.encodeToString(mapOf(
             "audio" to Base64.encode(SystemFileSystem.source(Path(file)).buffered().use { it.readByteArray() })
         )))
+        println("sent audio at $file")
     }
     // sends image file
     fun sendImage(file: String) {
-        socket.emit("audio", Json.encodeToString(mapOf(
-            "image" to Base64.encode(SystemFileSystem.source(Path(file)).buffered().use { it.readByteArray() }),
-            "focal_length_px" to 3094
-        )))
+        socket.emit("audio", Json.encodeToString(buildJsonObject {
+            put("image", Base64.encode(SystemFileSystem.source(Path(file)).buffered().use { it.readByteArray() }))
+            put("focal_length_px", 3094)
+        }))
+        println("sent image at $file")
     }
 }

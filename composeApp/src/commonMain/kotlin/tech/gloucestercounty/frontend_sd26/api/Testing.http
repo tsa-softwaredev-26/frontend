@@ -2,6 +2,6 @@ WEBSOCKET ws://nre5bjw44wddpu2zjg4fe4iehq.srv.us/socket.io/?key=27d56c87984f2804
 Content-Type: application/json
 
 ###
-GET https://nre5bjw44wddpu2zjg4fe4iehq.srv.us/items
-X-API-Key: 27d56c87984f2804e4c30459c0ea2623f9536dce3b38aa29a911abfe6b45cc47
+GET https://ii7tcxfnhkcaui3pj6zb25y3ri.srv.us/health
+X-API-Key: 299785c6c2c90213cba57e443ecfee5c1f05e86da0a5579f411e41721fdc9048
 
