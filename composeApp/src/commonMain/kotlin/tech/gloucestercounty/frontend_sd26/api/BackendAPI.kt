@@ -173,6 +173,10 @@ object BaseAPI {
                 println("listening: $it")
             }
 
+            on("listening_stopped") {
+                println("listening_stopped: $it")
+            }
+
             on(SocketEvent.Message) {
                 println(it.toString())
             }
