@@ -1,7 +1,6 @@
 TEAM_ID=
 
 PRODUCT_NAME=frontend_sd26
-PRODUCT_BUNDLE_IDENTIFIER=tech.gloucestercounty.frontend_sd26.frontend_sd26$(TEAM_ID)
-
+PRODUCT_BUNDLE_IDENTIFIER=tech.gloucestercounty.frontend-sd26
 CURRENT_PROJECT_VERSION=1
 MARKETING_VERSION=1.0

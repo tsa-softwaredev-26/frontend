@@ -1,0 +1,33 @@
+PODS:
+  - mokoSocketIo (0.6.0):
+    - Socket.IO-Client-Swift (~> 15.2.0)
+  - Socket.IO-Client-Swift (15.2.0):
+    - Starscream (~> 3.1)
+  - Starscream (3.1.1)
+
+DEPENDENCIES:
+  - mokoSocketIo (from `https://github.com/icerockdev/moko-socket-io.git`, tag `release/0.6.0`)
+
+SPEC REPOS:
+  trunk:
+    - Socket.IO-Client-Swift
+    - Starscream
+
+EXTERNAL SOURCES:
+  mokoSocketIo:
+    :git: https://github.com/icerockdev/moko-socket-io.git
+    :tag: release/0.6.0
+
+CHECKOUT OPTIONS:
+  mokoSocketIo:
+    :git: https://github.com/icerockdev/moko-socket-io.git
+    :tag: release/0.6.0
+
+SPEC CHECKSUMS:
+  mokoSocketIo: 437b3c2bc2213082b74455579237c529dfa0c795
+  Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c
+  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
+
+PODFILE CHECKSUM: e55cf8e5e4e86fe46dc851611383d1950f6dede6
+
+COCOAPODS: 1.16.2
