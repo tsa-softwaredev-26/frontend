@@ -88,8 +88,16 @@ fun Scan() {
                             scope.launch {
                                 when (val res = controller.takePictureToFile()) {
                                     is ImageCaptureResult.SuccessWithFile -> {
-                                        BaseAPI.sendImage(res.filePath)
-                                        nav.navigate(PostScan(res.filePath))
+                                        val sent = BaseAPI.sendImage(res.filePath)
+                                        if (sent) {
+                                            nav.navigate(PostScan(res.filePath))
+                                        } else {
+                                            scope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    "Backend is not waiting for an image yet. Start a voice scan first."
+                                                )
+                                            }
+                                        }
                                     }
                                     is ImageCaptureResult.Error -> scope.launch {
                                         snackbarHostState.showSnackbar("Unable to take photo, please try again")

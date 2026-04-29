@@ -16,17 +16,38 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import kotlin.io.encoding.Base64
 
 // the overall api interaction object
 object BaseAPI {
     // basic variables used by all functions
-    private const val URL = "https://ii7tcxfnhkcaui3pj6zb25y3ri.srv.us" // will occasionally update, looking into wiredoor instead of srv.us
+    private const val URL = "https://ii7tcxfnhkcaui3pj6zb25y3ri.srv.us"
     private const val API_KEY = "299785c6c2c90213cba57e443ecfee5c1f05e86da0a5579f411e41721fdc9048" // change before committing and after pulling (fake one used in some commits)
+    private const val DEFAULT_FOCAL_LENGTH_PX = 3094
     private val client = HttpClient()
+    private val json = Json { ignoreUnknownKeys = true }
     private lateinit var socket: Socket
+    private var lastAudioFile: String? = null
+    private var awaitingImageCapture = false
+
+    private fun encodeFile(path: String): String {
+        return Base64.encode(SystemFileSystem.source(Path(path)).buffered().use { it.readByteArray() })
+    }
+
+    private fun emitAudioEvent(audioFile: String, imageFile: String? = null) {
+        val payload = buildJsonObject {
+            put("audio", encodeFile(audioFile))
+            if (imageFile != null) {
+                put("image", encodeFile(imageFile))
+                put("focal_length_px", DEFAULT_FOCAL_LENGTH_PX)
+            }
+        }
+        socket.emit("audio", payload)
+    }
 
     // basic reusable get function
     private suspend inline fun <reified T> Get(path: String): T {
@@ -94,38 +115,62 @@ object BaseAPI {
     ) {
         // start the websocket connection
         socket = Socket(
-            endpoint = "wss://$URL/socket.io/?key=$API_KEY&EIO=4&transport=websocket",
+            endpoint = URL,
             config = SocketOptions(
                 transport = SocketOptions.Transport.WEBSOCKET,
-                queryParams = null
+                queryParams = mapOf("key" to API_KEY)
             )
         ) {
             // when server asks for tts
             on("tts") {
-                // run tts function with passed text
-                tts(Json.parseToJsonElement(it).jsonObject["narration"].toString())
+                val narration = json.parseToJsonElement(it).jsonObject["narration"]?.jsonPrimitive?.contentOrNull
+                if (narration != null) {
+                    tts(narration)
+                }
                 println("tts running")
             }
 
             // when server asks for camera to open
             on("control") {
-                // run the passed openCamera function
-                openCamera()
+                val data = json.parseToJsonElement(it).jsonObject
+                val action = data["action"]?.jsonPrimitive?.contentOrNull
+                if (action == "request_image") {
+                    awaitingImageCapture = true
+                    openCamera()
+                }
                 println("opening camera")
             }
 
             // when server asks to store scan id for later use
             on("action_result") {
-                val data = Json.parseToJsonElement(it).jsonObject // get data
-                store(data["type"].toString(), (data["data"] as JsonObject)["scan_id"].toString()) // run corresponding function
+                val data = json.parseToJsonElement(it).jsonObject
+                val type = data["type"]?.jsonPrimitive?.contentOrNull ?: return@on
+                val scanId = data["data"]?.jsonObject?.get("scan_id")?.jsonPrimitive?.contentOrNull
+                if (scanId != null) {
+                    store(type, scanId)
+                }
                 println("storing data")
             }
 
             // when an error occurs
             on("error") {
-                val data = Json.parseToJsonElement(it).jsonObject // get data
-                error(data["code"].toString(), data["message"].toString()) // run corresponding function
-                println("ERROR ${data["code"].toString()}: ${data["message"].toString()}")
+                val data = json.parseToJsonElement(it).jsonObject
+                val code = data["code"]?.jsonPrimitive?.contentOrNull ?: "unknown"
+                val message = data["message"]?.jsonPrimitive?.contentOrNull ?: "Unknown error"
+                error(code, message)
+                println("ERROR $code: $message")
+            }
+
+            on("transcription") {
+                println("transcription: $it")
+            }
+
+            on("session_state") {
+                println("session_state: $it")
+            }
+
+            on("listening") {
+                println("listening: $it")
             }
 
             on(SocketEvent.Message) {
@@ -139,17 +184,22 @@ object BaseAPI {
     // NOTE: WEBSOCKET MUST ALREADY BE CREATED USING WS()
     // sends most recently recorded audio file
     fun sendAudio(file: String) {
-        socket.emit("audio", Json.encodeToString(mapOf(
-            "audio" to Base64.encode(SystemFileSystem.source(Path(file)).buffered().use { it.readByteArray() })
-        )))
+        lastAudioFile = file
+        emitAudioEvent(file)
         println("sent audio at $file")
     }
-    // sends image file
-    fun sendImage(file: String) {
-        socket.emit("audio", Json.encodeToString(buildJsonObject {
-            put("image", Base64.encode(SystemFileSystem.source(Path(file)).buffered().use { it.readByteArray() }))
-            put("focal_length_px", 3094)
-        }))
-        println("sent image at $file")
+
+    // queues an image request and, when the backend is waiting for one, completes the
+    // original voice turn by resending the last audio with the captured image attached.
+    fun sendImage(file: String): Boolean {
+        val audioFile = lastAudioFile
+        if (awaitingImageCapture && audioFile != null) {
+            emitAudioEvent(audioFile, imageFile = file)
+            awaitingImageCapture = false
+            println("sent image with cached audio at $file")
+            return true
+        }
+        println("captured image at $file but backend is not awaiting one")
+        return false
     }
 }
