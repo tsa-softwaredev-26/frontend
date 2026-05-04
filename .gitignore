@@ -18,3 +18,4 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
 iosApp/Pods/
+/composeApp/src/commonMain/kotlin/tech/gloucestercounty/frontend_sd26/api/env.kt

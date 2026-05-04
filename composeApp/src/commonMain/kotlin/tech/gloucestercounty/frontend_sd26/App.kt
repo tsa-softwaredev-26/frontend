@@ -44,7 +44,7 @@ fun App() {
                 AudioRecorder.speak(text) // narrate server-provided text via platform tts
             },
             openCamera = {
-                nav.navigate(ScanPage) // server requested the camera be opened
+                if (nav.currentDestination != ScanPage) nav.navigate(ScanPage) // server requested the camera be opened
             },
             store = { type, id ->
                 AudioRecorder.lastScanResult.value = type to id // store scan result type and id for later use

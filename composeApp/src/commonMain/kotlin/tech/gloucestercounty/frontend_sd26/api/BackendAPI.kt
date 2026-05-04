@@ -8,6 +8,8 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
@@ -25,8 +27,6 @@ import kotlin.io.encoding.Base64
 // the overall api interaction object
 object BaseAPI {
     // basic variables used by all functions
-    private const val URL = "https://ii7tcxfnhkcaui3pj6zb25y3ri.srv.us"
-    private const val API_KEY = "299785c6c2c90213cba57e443ecfee5c1f05e86da0a5579f411e41721fdc9048" // change before committing and after pulling (fake one used in some commits)
     private const val DEFAULT_FOCAL_LENGTH_PX = 3094
     private val client = HttpClient()
     private val json = Json { ignoreUnknownKeys = true }
@@ -51,8 +51,8 @@ object BaseAPI {
 
     // basic reusable get function
     private suspend inline fun <reified T> Get(path: String): T {
-        val res = client.get("$URL$path") {
-            header("X-API-Key", API_KEY) // add api key header
+        val res = client.get("${ENV.server}$path") {
+            header("X-API-Key", ENV.apiKey) // add api key header
         }
         // decide what kind of response to give based on what was passed in function call
         return when (T::class) {
@@ -65,9 +65,9 @@ object BaseAPI {
 
     // identical to get request except for commented parts
     private suspend inline fun <reified T> Req(path: String, hMethod: HttpMethod, data: JsonObject? = null): T {
-        val res = client.request("$URL$path") {
+        val res = client.request("${ENV.server}$path") {
             method = hMethod // specify http method manually
-            header("X-API-Key", API_KEY)
+            header("X-API-Key", ENV.apiKey)
             if (data != null) header(HttpHeaders.ContentType, "application/json") // add content type header
             if (data != null) setBody(data.toString()) // add body data to request
         }
@@ -115,10 +115,10 @@ object BaseAPI {
     ) {
         // start the websocket connection
         socket = Socket(
-            endpoint = URL,
+            endpoint = ENV.server,
             config = SocketOptions(
                 transport = SocketOptions.Transport.WEBSOCKET,
-                queryParams = mapOf("key" to API_KEY)
+                queryParams = mapOf("key" to ENV.apiKey)
             )
         ) {
             // when server asks for tts
@@ -126,8 +126,8 @@ object BaseAPI {
                 val narration = json.parseToJsonElement(it).jsonObject["narration"]?.jsonPrimitive?.contentOrNull
                 if (narration != null) {
                     tts(narration)
+                    println("tts running, text: $narration")
                 }
-                println("tts running")
             }
 
             // when server asks for camera to open
@@ -136,7 +136,9 @@ object BaseAPI {
                 val action = data["action"]?.jsonPrimitive?.contentOrNull
                 if (action == "request_image") {
                     awaitingImageCapture = true
-                    openCamera()
+                    MainScope().launch {
+                        openCamera()
+                    }
                 }
                 println("opening camera")
             }
